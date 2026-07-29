@@ -62,7 +62,7 @@ The system applies the **Certainty Factor (CF)** method, a reasoning technique c
 
 ## Video
 
-<video src="https://github.com/user-attachments/assets/4fff09f7-88b1-49d6-a01e-f98d98a1b824" controls="controls" style="max-width:100%;"></video>
+<video src="https://github.com/user-attachments/assets/5e34a85d-2026-4277-9b32-f872d118a4e8" controls="controls" style="max-width:100%;"></video>
 
 ## Screenshots
 
