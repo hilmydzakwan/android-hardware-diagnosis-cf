@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistem Pakar Diagnosa Kerusakan HP — CF (Neo-Glass Premium)</title>
+  <style>
+    :root{
+      --bg-1:#071026; --bg-2:#081229;
+      --glass:rgba(255,255,255,0.04);
+      --muted:#9aaec6;
+      --accent-1:#7c3aed; --accent-2:#06b6d4; --accent-3:#60a5fa;
+      --success:#10b981; --warn:#f59e0b; --danger:#ef4444;
+      --card-border:rgba(255,255,255,0.06); --text:#e6eef8;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:var(--text);
+      background:
+        radial-gradient(800px 400px at 10% 10%, rgba(124,58,237,0.06), transparent 6%),
+        radial-gradient(600px 300px at 90% 90%, rgba(6,182,212,0.05), transparent 10%),
+        linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    a{color:inherit;text-decoration:none}
+
+    /* layout */
+    .container{max-width:1220px;margin:28px auto;padding:18px;display:grid;grid-template-columns:360px 1fr;gap:18px}
+    header{grid-column:1/-1;display:flex;align-items:center;gap:14px;margin-bottom:6px}
+    .logo-wrap{display:flex;align-items:center;gap:12px}
+    /* circular glass logo */
+    .logo {
+      width:62px;height:62px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow:0 12px 30px rgba(7,10,30,0.6);
+      position:relative; backdrop-filter: blur(6px);
+    }
+    .logo svg{width:36px;height:36px;filter:drop-shadow(0 6px 18px rgba(0,0,0,0.45));}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    /* cards */
+    .card{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:16px;border:1px solid var(--card-border);box-shadow:0 8px 30px rgba(2,6,23,0.6);backdrop-filter: blur(8px);}
+    aside.card{height:calc(100vh - 120px);overflow:auto}
+    section.card{min-height:560px;overflow:auto}
+
+    /* sidebar */
+    .sidebar-title{display:flex;justify-content:space-between;align-items:center}
+    .cats{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+    .cat-row{display:flex;align-items:center;gap:10px}
+    .cat-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent-1)}
+    .presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{padding:8px 10px;border-radius:999px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);cursor:pointer;color:var(--text);font-size:13px;transition:transform .12s}
+    .chip:hover{transform:translateY(-3px)}
+    .controls{display:flex;gap:10px;margin-top:14px}
+    .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn.primary{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:white;box-shadow:0 8px 22px rgba(124,58,237,0.16)}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* gejala grid */
+    .gejala-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+    .gejala{background: linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.008));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);transition:transform .12s,box-shadow .12s;display:flex;flex-direction:column;gap:8px;}
+    .gejala:hover{transform:translateY(-3px)}
+    .gejala h4{margin:0;font-size:14px}
+    .gejala .meta{font-size:12px;color:var(--muted)}
+    .controls-inline{display:flex;gap:8px;align-items:center}
+    .conf{
+  appearance:none;
+  padding:8px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(20,22,30,0.9); /* gelap */
+  color:var(--text);
+}
+.conf option{
+  background:#111720 !important;
+  color:#e6eef8 !important;
+}
+
+
+    /* hide select until checked */
+    .conf.hidden{display:none}
+
+    /* results */
+    .result-wrap{display:grid;grid-template-columns:1fr 420px;gap:14px;margin-top:18px}
+    .result-left{min-height:260px;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));border:1px solid rgba(255,255,255,0.03);overflow:auto}
+    .result-right{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));border:1px solid rgba(255,255,255,0.03)}
+    .res-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;margin-bottom:10px;background:rgba(255,255,255,0.018);border:1px solid rgba(255,255,255,0.02)}
+    .res-item strong{font-size:15px}
+    .percent{font-weight:900;font-size:16px}
+    .explain{color:var(--muted);font-size:13px;margin-top:6px}
+    .badge{font-weight:800;padding:6px 8px;border-radius:999px;font-size:12px}
+    .badge.high{background:linear-gradient(90deg,#ff7b7b,#ef4444);color:#fff}
+    .badge.mid{background:linear-gradient(90deg,#ffd28a,#f59e0b);color:#2b1700}
+    .badge.low{background:linear-gradient(90deg,#9ff3d0,#10b981);color:#063017}
+    .badge.none{background:linear-gradient(90deg,#8ea8c3,#64748b);color:#0b1420}
+
+    .top3-list{display:flex;flex-direction:column;gap:8px}
+    .top3-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+
+    canvas{width:100%;height:220px;display:block;border-radius:8px}
+
+    footer{grid-column:1/-1;text-align:center;margin-top:12px;color:var(--muted);font-size:13px}
+
+    @media(max-width:980px){
+      .container{grid-template-columns:1fr;padding:12px}
+      .gejala-grid{grid-template-columns:1fr}
+      .result-wrap{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-wrap">
+        <div class="logo" aria-hidden="true">
+          <!-- circular glass icon with smartphone/repair SVG -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+            </defs>
+            <rect x="2.5" y="2.5" width="19" height="19" rx="6" fill="url(#g1)" opacity="0.12"></rect>
+            <path d="M9 3.5h6a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z" stroke="url(#g1)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 17.2a0.6 0.6 0 1 0 0-1.2 0.6 0.6 0 0 0 0 1.2z" fill="url(#g1)"/>
+          </svg>
+        </div>
+      </div>
+      <div style="flex:1">
+        <h1>Sistem Pakar Diagnosa Kerusakan HP</h1>
+        <p class="lead">Metode: Certainty Factor — antarmuka ramah pengguna untuk diagnosa hardware sebelum ke teknisi.</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;color:var(--muted)">Kelompok UAS — Sistem Pakar</div>
+      </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside class="card" aria-label="Kontrol">
+      <div class="sidebar-title">
+        <div>
+          <strong>Pilih Kategori</strong>
+          <div class="small">(kosong saat mulai — centang manual untuk memfilter gejala)</div>
+        </div>
+        <div class="small">v1.0</div>
+      </div>
+
+      <div class="cats" id="catsContainer" style="margin-top:12px">
+        <!-- categories will be rendered by JS (unchecked by default) -->
+      </div>
+
+      <div style="margin-top:14px">
+        <strong>Presets (opsional)</strong>
+        <div class="presets" style="margin-top:8px">
+          <div class="chip" onclick="applyPreset('no_power')">HP tidak mau nyala</div>
+          <div class="chip" onclick="applyPreset('screen_problem')">Masalah layar</div>
+          <div class="chip" onclick="applyPreset('charging')">Tidak bisa charge</div>
+          <div class="chip" onclick="clearPreset()">Clear</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <strong>Petunjuk singkat</strong>
+        <ol style="margin-top:8px;color:var(--muted);line-height:1.5">
+          <li>Pilih satu atau beberapa kategori (opsional) untuk memfilter gejala.</li>
+          <li>Centang gejala yang relevan dengan kondisi HP kamu.</li>
+          <li>Setelah mencentang, pilih tingkat keyakinan untuk tiap gejala (0 — 1.0).</li>
+          <li>Klik <strong>Diagnosa</strong> untuk melihat hasil; unduh CSV jika perlu.</li>
+        </ol>
+      </div>
+
+      <div class="controls" style="margin-top:14px">
+        <button class="btn primary" id="btnDiagnose">Diagnosa</button>
+        <button class="btn ghost" id="btnReset">Reset</button>
+      </div>
+
+      
+    </aside>
+
+    <!-- MAIN -->
+    <section class="card" aria-label="Main">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong>Daftar Gejala</strong>
+          <div class="small">Centang → lalu pilih tingkat keyakinan (muncul otomatis).</div>
+        </div>
+        <div class="small">Menampilkan: <span id="countGejala">0</span> gejala</div>
+      </div>
+
+      <div class="gejala-grid" id="gejalaGrid" style="margin-top:14px">
+        <!-- gejala cards inserted by JS -->
+      </div>
+
+      <div class="result-wrap">
+        <div class="result-left" id="resultLeft">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Hasil Diagnosa (Lengkap)</strong><div class="small">Urut berdasarkan tingkat keyakinan (persentase)</div></div>
+            <div><button class="btn ghost" id="btnDownload">Download CSV</button></div>
+          </div>
+
+          <div id="fullResults" style="margin-top:12px">
+            <div class="small" style="color:var(--muted)">Belum ada hasil — centang gejala dan klik Diagnosa untuk mulai.</div>
+          </div>
+        </div>
+
+        <div class="result-right">
+          <div><strong>Ringkasan Top-3</strong><div class="small">Prioritas tindakan singkat</div></div>
+          <div class="top3-list" id="top3List" style="margin-top:10px">
+            <div class="small" style="color:var(--muted)">Tidak ada data.</div>
+          </div>
+
+          <div style="margin-top:14px">
+  <strong>Grafik Tren (Top-10)</strong>
+  <div class="small">Garis menunjukkan level keyakinan (0–100%).</div>
+  <div class="small" style="margin-top:4px;margin-bottom:12px;color:#9aaec6">
+
+    • Tingkat Tinggi ≥ 80% <br>
+    • Tingkat Sedang ≥ 60% <br>
+    • Tingkat Rendah ≥ 40% <br>
+    • Tidak Signifikan &lt; 40%
+  </div>
+</div>
+
+          <canvas id="chartCanvas"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <footer>Neo-Glass UI — Sistem Pakar Diagnosa Kerusakan HP • Basis pengetahuan: Laporan UTS.</footer>
+  </div>
+
+<script>
+/* ===== Knowledge (rulesCF) - tetap sama seperti versi Python ===== */
+const rulesCF = {
+  "g1": {"Baterai Drop":0.85,"Konektor Baterai Tidak Menyalurkan Arus":0.75,"Tombol Power Rusak":0.70},
+  "g2": {"Modul LCD Rusak":0.90,"Fleksibel Layar Putus / Terlipat":0.80,"Konektor Layar Tidak Terhubung":0.75},
+  "g3": {"Panel LCD Rusak":0.90,"Fleksibel Display Bermasalah":0.80},
+  "g4": {"Port Charging Longgar / Rusak":0.85,"Jalur Charger Terputus":0.75,"IC Charging Rusak":0.80},
+  "g5": {"Baterai Drop":0.80,"Overheat Komponen Internal":0.75,"Jalur Daya Bermasalah":0.70},
+  "g6": {"IC Internal Bekerja Tidak Normal":0.85,"Jalur Mengalami Short Ringan":0.75},
+  "g7": {"Speaker Rusak":0.85,"Soket Speaker Longgar":0.70,"Jalur Audio Terputus":0.75},
+  "g8": {"Speaker Melemah":0.80,"Membran Speaker Kotor":0.70},
+  "g9": {"Modul Kamera Rusak":0.85,"Konektor Kamera Tidak Stabil":0.75},
+  "g10":{"Modul Antena Rusak":0.80,"Soket Antena Longgar":0.75,"Jalur Sinyal Putus":0.70},
+  "g11":{"Modul Touchscreen Rusak":0.85,"Fleksibel Touchscreen Bermasalah":0.75},
+  "g12":{"Port USB Rusak":0.85,"Jalur Data Putus":0.70},
+  "g13":{"Baterai Tidak Stabil":0.78,"Jalur Daya Bermasalah":0.72,"Overheat Komponen Internal":0.70},
+  "g14":{"Modul Touchscreen Rusak":0.85,"Fleksibel Touchscreen Rusak":0.75,"IC Touch Rusak":0.72},
+  "g15":{"IC WiFi/Bluetooth Rusak":0.85,"Jalur WiFi Terputus":0.72},
+  "g16":{"Baterai Rusak Parah":0.95,"Kualitas Baterai Buruk / Usia Tua":0.80,"Efek Overcharging":0.70}
+};
+
+/* ===== UI data ===== */
+const NAMA = {
+  "g1":"Perangkat tidak merespons tombol daya",
+  "g2":"Perangkat menyala tetapi layar gelap",
+  "g3":"Layar bergaris / tampilan pecah",
+  "g4":"Tidak bisa mengisi daya (charging)",
+  "g5":"Perangkat mati tiba-tiba",
+  "g6":"Perangkat terasa panas",
+  "g7":"Suara tidak keluar",
+  "g8":"Suara sangat kecil",
+  "g9":"Kamera tidak bisa dibuka / buram",
+  "g10":"Sinyal seluler tidak muncul",
+  "g11":"Layar tidak merespons sentuhan",
+  "g12":"Tidak terdeteksi via USB",
+  "g13":"Restart berulang",
+  "g14":"Ghost touch (sentuh sendiri)",
+  "g15":"WiFi tidak aktif",
+  "g16":"Baterai melembung"
+};
+const CATEGORIES = {
+  "Masalah Daya (Power)": ["g1","g5","g13","g16"],
+  "Kerusakan Layar": ["g2","g3","g11","g14"],
+  "Pengisian Daya (Charging)": ["g4","g12"],
+  "Audio": ["g7","g8"],
+  "Kamera": ["g9"],
+  "Konektivitas & Sinyal": ["g10","g12","g15"],
+  "Overheat / Performa": ["g6","g13"],
+  "Kerusakan Baterai (Fisik)": ["g16"]
+};
+const CONF_OPTS = [
+  {label:"0 - Tidak", value:0.0},
+  {label:"0.2 - Sangat rendah", value:0.2},
+  {label:"0.4 - Rendah", value:0.4},
+  {label:"0.6 - Sedang", value:0.6},
+  {label:"0.8 - Tinggi", value:0.8},
+  {label:"1.0 - Sangat yakin", value:1.0}
+];
+
+/* ===== CF logic (sama persis) ===== */
+function combine_cf(cf1, cf2){
+  if(cf1 >= 0 && cf2 >= 0){
+    return cf1 + cf2 * (1 - cf1);
+  } else if(cf1 < 0 && cf2 < 0){
+    return cf1 + cf2 * (1 + cf1);
+  } else {
+    return (cf1 + cf2) / (1 - Math.min(Math.abs(cf1), Math.abs(cf2)));
+  }
+}
+function hitung_cf_total(user_input){
+  const hasil = {};
+  for(const g in user_input){
+    if(!(g in rulesCF)) continue;
+    const uv = user_input[g];
+    const map = rulesCF[g];
+    for(const k in map){
+      const cf_rule = map[k];
+      const cf_gejala = uv * cf_rule;
+      if(!(k in hasil)){
+        hasil[k] = cf_gejala;
+      } else {
+        hasil[k] = combine_cf(hasil[k], cf_gejala);
+      }
+    }
+  }
+  return hasil;
+}
+function interpretasi_cf(v){
+  if(v >= 0.80) return "Tingkat Tinggi";
+  if(v >= 0.60) return "Tingkat Sedang";
+  if(v >= 0.40) return "Tingkat Rendah";
+  return "Tidak Signifikan";
+}
+
+/* ===== Helpers & recommend text based on kerusakan keyword ===== */
+function rekomendasiSingkat(k){
+  const s = k.toLowerCase();
+
+  if(s.includes("baterai")) return "Saran: cek kesehatan baterai atau lakukan penggantian.";
+  if(s.includes("port") || s.includes("charger") || s.includes("usb")) return "Saran: cek port dan jalurnya; kemungkinan perlu perbaikan konektor.";
+  if(s.includes("lcd") || s.includes("layar") || s.includes("panel")) return "Saran: periksa modul LCD dan fleksibel display.";
+  if(s.includes("touch")) return "Saran: cek fleksibel touchscreen atau modul IC touch.";
+  if(s.includes("speaker")) return "Saran: bersihkan speaker atau periksa soket.";
+  if(s.includes("kamera")) return "Saran: cek konektor kamera dan modulnya.";
+  if(s.includes("antena") || s.includes("sinyal")) return "Saran: periksa jalur antena dan soket sinyal.";
+  if(s.includes("wifi") || s.includes("bluetooth")) return "Saran: cek IC WiFi/Bluetooth.";
+  if(s.includes("overheat") || s.includes("short")) return "Saran: cek jalur daya dan kemungkinan komponen short.";
+
+  return "Saran: lakukan pemeriksaan lanjutan pada teknisi.";
+}
+
+
+/* ===== Render categories (unchecked by default) ===== */
+const catsContainer = document.getElementById('catsContainer');
+const gejalaGrid = document.getElementById('gejalaGrid');
+const countGejala = document.getElementById('countGejala');
+const btnDiagnose = document.getElementById('btnDiagnose');
+const btnReset = document.getElementById('btnReset');
+const fullResults = document.getElementById('fullResults');
+const top3List = document.getElementById('top3List');
+const btnDownload = document.getElementById('btnDownload');
+const chartCanvas = document.getElementById('chartCanvas');
+
+let activeCats = []; // start empty as requested
+let preset = {}; // for quick presets
+
+function renderCategories(){
+  catsContainer.innerHTML = '';
+  Object.keys(CATEGORIES).forEach(cat=>{
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    const id = 'cat_'+cat.replace(/\s+/g,'_');
+    row.innerHTML = `<input type="checkbox" id="${id}" />
+                     <label for="${id}" style="font-weight:700;margin-left:6px">${cat}</label>
+                     <div class="small" style="margin-left:auto">${CATEGORIES[cat].length} gejala</div>`;
+    catsContainer.appendChild(row);
+    document.getElementById(id).addEventListener('change', (e)=>{
+      if(e.target.checked){
+        if(!activeCats.includes(cat)) activeCats.push(cat);
+      } else {
+        activeCats = activeCats.filter(x=>x!==cat);
+      }
+      renderGejala();
+    });
+  });
+}
+
+/* ===== Render gejala — only show selects after checkbox is checked ===== */
+function renderGejala(){
+  gejalaGrid.innerHTML = '';
+  let visible = [];
+  activeCats.forEach(c=> (CATEGORIES[c]||[]).forEach(g=>{ if(!visible.includes(g)) visible.push(g); }));
+  const ordered = Object.keys(NAMA).filter(k=>visible.includes(k));
+  countGejala.innerText = ordered.length;
+  if(ordered.length===0){
+  gejalaGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted)"><strong>Tidak ada gejala ditampilkan.</strong> Pilih kategori di kiri atau gunakan Presets.</div>`;
+
+  // 🟣 Tambahan untuk hapus hasil saat kategori kosong
+  fullResults.innerHTML = '<div class="small" style="color:var(--muted)">Belum ada hasil — centang gejala dan klik Diagnosa untuk mulai.</div>';
+  top3List.innerHTML = '<div class="small" style="color:var(--muted)">Tidak ada data.</div>';
+  drawLineChart([]);
+  lastCsv = '';
+
+  return;
+}
+
+  ordered.forEach(g=>{
+    const el = document.createElement('div');
+    el.className = 'gejala';
+    // preset affects initial checked/select value if present
+    const presetValue = preset[g] !== undefined ? preset[g] : 1.0;
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h4>${NAMA[g]}</h4>
+        <label style="font-size:13px"><input type="checkbox" class="chk" data-g="${g}"/> pilih</label>
+      </div>
+      <div class="meta">Kode: <strong>${g}</strong></div>
+      <div class="controls-inline">
+        <select class="conf hidden" data-g="${g}" aria-label="pilihan keyakinan">
+          ${CONF_OPTS.map(o=>`<option value="${o.value}" ${o.value===presetValue?'selected':''}>${o.label}</option>`).join('')}
+        </select>
+        <div class="small">Tingkat keyakinan (muncul setelah centang)</div>
+      </div>`;
+    gejalaGrid.appendChild(el);
+  });
+
+  // bind toggles: when checkbox checked -> show select
+  document.querySelectorAll('.gejala').forEach(card=>{
+    const chk = card.querySelector('.chk');
+    const sel = card.querySelector('.conf');
+    // if preset available, auto-check and show
+    const g = chk.dataset.g;
+    if(preset[g] !== undefined){
+      chk.checked = true;
+      sel.classList.remove('hidden');
+      sel.value = preset[g];
+    }
+    chk.addEventListener('change', ()=>{
+      if(chk.checked) sel.classList.remove('hidden');
+      else sel.classList.add('hidden');
+    });
+  });
+}
+
+/* ===== Presets helpers ===== */
+function applyPreset(name){
+  preset = {};
+  if(name==='no_power'){ preset={"g1":1.0,"g5":0.8,"g16":0.0}; activeCats = ["Masalah Daya (Power)"]; }
+  else if(name==='screen_problem'){ preset={"g2":1.0,"g3":0.6,"g14":0.6}; activeCats=["Kerusakan Layar"]; }
+  else if(name==='charging'){ preset={"g4":1.0,"g12":0.8}; activeCats=["Pengisian Daya (Charging)"]; }
+  renderCategories(); // ensure checkboxes reflect activeCats
+  // mark the category checkbox(es) checked
+  Object.keys(CATEGORIES).forEach(cat=>{
+    const id = 'cat_'+cat.replace(/\s+/g,'_');
+    const el = document.getElementById(id);
+    if(el) el.checked = activeCats.includes(cat);
+  });
+  renderGejala();
+}
+function clearPreset(){ preset={}; activeCats=[]; renderCategories(); renderGejala(); }
+
+/* ===== Collect user inputs only for checked gejala ===== */
+function collectInputs(){
+  const inputs = {};
+  document.querySelectorAll('.gejala').forEach(card=>{
+    const chk = card.querySelector('.chk');
+    const g = chk.dataset.g;
+    if(chk.checked){
+      const sel = card.querySelector('.conf');
+      const val = parseFloat(sel.value);
+      if(val>0) inputs[g] = val;
+    }
+  });
+  return inputs;
+}
+
+/* ===== Render results user-friendly ===== */
+let lastCsv = '';
+function renderResults(resObj){
+  fullResults.innerHTML = '';
+  top3List.innerHTML = '';
+  const items = Object.entries(resObj).sort((a,b)=>b[1]-a[1]);
+  if(items.length===0){
+    fullResults.innerHTML = '<div class="small" style="color:var(--muted)">Tidak ada kerusakan terdeteksi.</div>';
+    top3List.innerHTML = '<div class="small" style="color:var(--muted)">Tidak ada data.</div>';
+    drawLineChart([]);
+    lastCsv = '';
+    return;
+  }
+
+  // Full readable list
+  items.forEach(([k,v])=>{
+    const percent = Math.round(v*100);
+    const level = interpretasi_cf(v);
+    const badgeClass = v>=0.8 ? 'badge high' : v>=0.6 ? 'badge mid' : v>=0.4 ? 'badge low' : 'badge none';
+    const item = document.createElement('div');
+    item.className = 'res-item';
+    item.innerHTML = `
+      <div style="flex:1">
+        <strong>${k}</strong>
+        <div class="explain">${interpretasi_cf(v)} — Keyakinan: <span class="percent">${percent}%</span></div>
+        <div class="explain">${rekomendasiSingkat(k)}</div>
+      </div>
+      <div style="text-align:right;min-width:110px">
+        <div style="font-size:15px;font-weight:900">${percent}%</div>
+        <div style="margin-top:8px"><span class="${badgeClass}">${level}</span></div>
+      </div>`;
+    fullResults.appendChild(item);
+  });
+
+  // Top-3 summary — simpler wording
+  items.slice(0,3).forEach(([k,v],i)=>{
+    const percent = Math.round(v*100);
+    const node = document.createElement('div');
+    node.className = 'top3-item';
+    node.innerHTML = `<div style="display:flex;flex-direction:column">
+                        <div style="font-weight:800">${i+1}. ${k}</div>
+                        <div class="small">${rekomendasiSingkat(k)}</div>
+                      </div>
+                      <div style="text-align:right">
+                        <div style="font-weight:900">${percent}%</div>
+                        <div class="small">${interpretasi_cf(v)}</div>
+                      </div>`;
+    top3List.appendChild(node);
+  });
+
+  // Chart (line) for top 10 (only kerusakan names + CF values)
+  drawLineChart(items.slice(0,10));
+
+  // CSV
+  const rows=[['Kerusakan','CF','Persentase','Level']];
+  items.forEach(([k,v])=> rows.push([`"${k.replace(/"/g,'')}"`, v.toFixed(4), `${Math.round(v*100)}%`, `"${interpretasi_cf(v)}"`]));
+  lastCsv = rows.map(r=>r.join(',')).join('\n');
+}
+
+/* ===== Line chart function (trading-like) ===== */
+function drawLineChart(items){
+  const c = chartCanvas;
+  const ctx = c.getContext('2d');
+  const W = c.width = c.clientWidth;
+  const H = c.height = c.clientHeight;
+  ctx.clearRect(0,0,W,H);
+  // background grid
+  ctx.fillStyle = 'rgba(255,255,255,0.01)';
+  ctx.fillRect(0,0,W,H);
+  // if no items
+  if(items.length===0){
+    ctx.fillStyle='rgba(255,255,255,0.06)';
+    ctx.font='14px Inter, Arial';
+    ctx.fillText('Grafik kosong — lakukan diagnosa untuk menampilkan tren', 12, 28);
+    return;
+  }
+  // prepare data: x positions and values (0..1 scaled to 0..H)
+  const values = items.map(i=>i[1]);
+  const labels = items.map(i=>i[0]);
+  const maxV = Math.max(...values, 0.001);
+  const paddingX = 40;
+  const paddingY = 28;
+  const plotW = W - paddingX*2;
+  const plotH = H - paddingY*2;
+  // draw grid lines (5 horizontal)
+  ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+  ctx.beginPath();
+  for(let i=0;i<=4;i++){
+    const y = paddingY + i*(plotH/4);
+    ctx.moveTo(paddingX,y); ctx.lineTo(W-paddingX,y);
+  }
+  ctx.stroke();
+  // compute points
+  const stepX = plotW / Math.max(values.length-1,1);
+  const points = values.map((v,i)=>{
+    const x = paddingX + i*stepX;
+    const y = paddingY + (1 - v/maxV) * plotH;
+    return {x,y,v,lab:labels[i]};
+  });
+  // draw gradient fill under line
+  const grd = ctx.createLinearGradient(0,paddingY,0,H);
+  grd.addColorStop(0,'rgba(96,165,250,0.14)'); grd.addColorStop(1,'rgba(96,165,250,0.02)');
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, H - paddingY);
+  points.forEach(p=> ctx.lineTo(p.x, p.y));
+  ctx.lineTo(points[points.length-1].x, H - paddingY);
+  ctx.closePath();
+  ctx.fillStyle = grd; ctx.fill();
+  // draw line
+  ctx.beginPath();
+  ctx.lineWidth = 2.6; ctx.strokeStyle = 'rgba(96,165,250,0.98)';
+  points.forEach((p,i)=> i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.stroke();
+  // draw points and labels
+  ctx.font='12px Inter, Arial';
+  points.forEach(p=>{
+    // circle
+    ctx.beginPath(); ctx.fillStyle='white'; ctx.arc(p.x,p.y,4.2,0,Math.PI*2); ctx.fill();
+    // outer ring
+    ctx.beginPath(); ctx.strokeStyle='rgba(96,165,250,0.9)'; ctx.lineWidth=1.6; ctx.arc(p.x,p.y,7,0,Math.PI*2); ctx.stroke();
+    // value
+    ctx.fillStyle='#e6eef8'; ctx.font='12px Inter, Arial'; ctx.fillText(Math.round(p.v*100)+'%', p.x-12, p.y-12);
+  });
+  
+  // y-axis labels (percent)
+  ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px Inter, Arial';
+  for(let i=0;i<=4;i++){
+    const val = Math.round((1 - i/4)*maxV*100);
+    const y = paddingY + i*(plotH/4);
+    ctx.fillText(val+'%', 6, y+4);
+  }
+}
+
+/* ===== CSV download ===== */
+document.getElementById('btnDownload').addEventListener('click', ()=>{
+  if(!lastCsv){ alert('Belum ada hasil. Lakukan diagnosa terlebih dahulu.'); return; }
+  const blob = new Blob([lastCsv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='diagnosa_results.csv'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ===== Buttons events ===== */
+document.getElementById('btnDiagnose').addEventListener('click', ()=>{
+  const inputs = collectInputs();
+  if(Object.keys(inputs).length===0){ alert('Pilih minimal 1 gejala dan set tingkat keyakinan.'); return; }
+  const res = hitung_cf_total(inputs);
+  renderResults(res);
+});
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  preset={}; activeCats=[]; renderCategories(); renderGejala();
+  fullResults.innerHTML='<div class="small" style="color:var(--muted)">Belum ada hasil — centang gejala dan klik Diagnosa untuk mulai.</div>';
+  top3List.innerHTML='<div class="small" style="color:var(--muted)">Tidak ada data.</div>';
+  lastCsv=''; drawLineChart([]);
+});
+
+/* expose presets to inline onclicks */
+window.applyPreset = applyPreset; window.clearPreset = clearPreset;
+
+/* ===== Initial render (categories unchecked) ===== */
+renderCategories(); renderGejala(); drawLineChart([]);
+</script>
+</body>
+</html>
