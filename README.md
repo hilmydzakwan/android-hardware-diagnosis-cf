@@ -1,4 +1,5 @@
 <div align="center">
+  
 # Android Hardware Diagnosis Expert System
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue)
@@ -7,6 +8,7 @@
 ![Method](https://img.shields.io/badge/Method-Certainty%20Factor-success)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
 </div>
 
 ---
