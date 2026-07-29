@@ -45,7 +45,7 @@ Diagnosing smartphone hardware failures often requires technical knowledge and p
 
 The system applies the **Certainty Factor (CF)** method, a reasoning technique commonly used in expert systems to represent uncertainty. Since one symptom can indicate multiple hardware failures with different confidence levels, the CF method combines expert knowledge with user confidence values to estimate the most probable diagnosis.
 
-<img width="1315" height="1196" alt="ChatGPT Image 30 Jul 2026, 06 35 01" src="https://github.com/user-attachments/assets/ccf3533e-7a02-4bd0-b97c-508e42c959bb" />
+<img width="1319" height="1192" alt="flow-expert-system" src="https://github.com/user-attachments/assets/628c044d-8235-4d0d-92ab-554b79a22ab6" />
 
 ---
 
