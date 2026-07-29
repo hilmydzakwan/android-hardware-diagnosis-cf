@@ -216,3 +216,11 @@ Special thanks to the professional smartphone repair technician who generously s
 - Andrean Yudi Utomo
 - Hafidz Zaman
 - Adjly Vellian Qianu
+
+---
+
+<div align="center">
+
+Made with ❤️ by **[Hilmy Dzakwan](https://github.com/hilmydzakwan)**
+
+</div>
