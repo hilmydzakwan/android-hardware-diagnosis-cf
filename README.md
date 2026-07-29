@@ -1,3 +1,4 @@
+<div align="center">
 # Android Hardware Diagnosis Expert System
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue)
@@ -6,6 +7,9 @@
 ![Method](https://img.shields.io/badge/Method-Certainty%20Factor-success)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-green)
+</div>
+
+---
 
 A web-based expert system that performs an initial diagnosis of Android hardware problems using the **Certainty Factor (CF)** method. Users select the symptoms they are experiencing, and the system estimates the most likely hardware failure along with its confidence level.
 
