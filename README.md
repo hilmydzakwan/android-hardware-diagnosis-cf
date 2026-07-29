@@ -1,154 +1,203 @@
-<div align="center">
+# Android Hardware Diagnosis Expert System
 
-# 🐦 Flappy Bird 2D — OpenGL & FreeGLUT
+![Python](https://img.shields.io/badge/Python-3.x-blue)
+![HTML5](https://img.shields.io/badge/HTML5-orange)
+![JavaScript](https://img.shields.io/badge/JavaScript-yellow)
+![Method](https://img.shields.io/badge/Method-Certainty%20Factor-success)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-Reimplementasi game **Flappy Bird** dalam grafik 2D menggunakan **C++**, **OpenGL**, dan **FreeGLUT**.
-Dibuat sebagai project mata kuliah **Komputer Grafik**.
+A web-based expert system that performs an initial diagnosis of Android hardware problems using the **Certainty Factor (CF)** method. Users select the symptoms they are experiencing, and the system estimates the most likely hardware failure along with its confidence level.
 
-![Language](https://img.shields.io/badge/Language-C%2B%2B-blue?style=flat-square)
-![Graphics](https://img.shields.io/badge/Graphics-OpenGL-5586A4?style=flat-square)
-![Library](https://img.shields.io/badge/Library-FreeGLUT-orange?style=flat-square)
-![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-
-</div>
+This project was developed as the final project for the **Expert System** course, Informatics Engineering, Faculty of Informatics, Bina Insani University (2026).
 
 ---
 
-## 📸 Preview
+# Table of Contents
 
-<div align="center">
-
-![Gameplay Demo](assets/screenshots/demo.gif)
-
-| Start Screen | Gameplay | Game Over |
-|:---:|:---:|:---:|
-| ![Start](assets/screenshots/start.png) | ![Gameplay](assets/screenshots/gameplay.png) | ![Game Over](assets/screenshots/gameover.png) |
-
-</div>
-
-
-## ✨ Fitur
-
-- 🎮 Physics sederhana: **gravity** & **jump** pada burung
-- 🌀 Rotasi burung dinamis mengikuti arah kecepatan (efek "diving" & "flying")
-- 🟩 Pipa dengan celah (gap) acak yang **mengecil seiring skor bertambah** (tingkat kesulitan naik)
-- ⚡ Kecepatan pipa bertambah secara progresif → game makin menantang
-- 🎵 Background music & sound effect saat mencetak skor (via Windows Multimedia API)
-- ☁️ Elemen visual dekoratif (awan) yang digambar prosedural dengan `GL_TRIANGLE_FAN`
-- 🏆 Sistem skor & high score real-time
-- 🔁 Restart cepat dengan satu tombol
+- [Overview](#overview)
+- [Features](#features)
+- [Demo](#demo)
+- [Project Structure](#project-structure)
+- [How the System Works](#how-the-system-works)
+- [Technology Stack](#technology-stack)
+- [Symptom Categories](#symptom-categories)
+- [Limitations](#limitations)
+- [Future Development](#future-development)
+- [What I Learned](#what-i-learned)
+- [References](#references)
+- [License](#license)
+- [Acknowledgment](#acknowledgment)
 
 ---
 
-## 🕹️ Kontrol
+# Overview
 
-| Tombol | Aksi |
-|:---:|---|
-| `SPACE` | Mulai game / membuat burung terbang (jump) |
-| `R` | Restart game |
+Diagnosing smartphone hardware failures often requires technical knowledge and practical experience. This project aims to assist users by providing an initial diagnosis based on the symptoms they observe.
 
----
-
-## 🛠️ Tech Stack
-
-- **Bahasa:** C++
-- **Grafik:** OpenGL (Fixed-Function Pipeline / Immediate Mode)
-- **Windowing & Input:** FreeGLUT
-- **Audio:** Windows Multimedia API (`winmm.lib`, `mciSendString`, `PlaySound`)
-- **Platform:** Windows
+The system applies the **Certainty Factor (CF)** method, a reasoning technique commonly used in expert systems to represent uncertainty. Since one symptom can indicate multiple hardware failures with different confidence levels, the CF method combines expert knowledge with user confidence values to estimate the most probable diagnosis.
 
 ---
 
-## 📁 Struktur Project
+# Features
 
-```
-flappy-bird-2d-opengl/
-├── .vscode/
-│   └── tasks.json          # Konfigurasi build task VS Code
-├── assets/
-│   ├── musik.wav            # Background music
-│   ├── sound.wav             # Sound effect skor
-│   └── screenshots/          # Screenshot & GIF untuk README
-├── src/
-│   └── main.cpp              # Source code utama game
-├── .gitignore
+- Android hardware diagnosis based on selected symptoms
+- Certainty Factor reasoning engine
+- Knowledge base built from expert technician knowledge
+- Confidence score calculation
+- Top 3 diagnosis ranking
+- Interactive diagnosis chart
+- Responsive web interface
+- Simple and intuitive user experience
+
+---
+
+# Demo
+
+## Video
+
+<video src="https://github.com/user-attachments/assets/4fff09f7-88b1-49d6-a01e-f98d98a1b824" controls="controls" style="max-width:100%;"></video>
+
+## Screenshots
+
+### Diagnosis Input
+
+![Diagnosis Input](docs/input-diagnosa.png)
+
+### Diagnosis Result
+
+![Diagnosis Result](docs/hasil-diagnosa.png)
+
+---
+
+# Project Structure
+
+```text
+android-hardware-diagnosis-cf
+│
+├── docs
+│   ├── input-diagnosa.png
+│   └── hasil-diagnosa.png
+│
+├── index.html
+├── inference.py
+├── knowledge.py
+├── README.md
 ├── LICENSE
-└── README.md
+└── .gitignore
 ```
 
 ---
 
-## ⚙️ Instalasi & Menjalankan
+# How the System Works
 
-### Prasyarat
+### 1. Symptom Input
 
-- **Windows OS** (menggunakan Windows Multimedia API untuk audio)
-- Compiler C++ (disarankan **MinGW-w64** / g++)
-- **FreeGLUT** (header & library) sudah terpasang dan ter-link di compiler
-- **VS Code** (opsional, sudah ada konfigurasi `.vscode/tasks.json`)
+Users select the symptoms they are experiencing and specify their confidence level for each symptom.
 
-### Build via terminal (g++ / MinGW)
+### 2. Knowledge Base
 
-```bash
-g++ src/main.cpp -o flappybird.exe -lfreeglut -lopengl32 -lglu32 -lwinmm
-```
+Each symptom is associated with one or more possible hardware failures. Every relationship has a Certainty Factor value defined by an experienced smartphone technician.
 
-### Menjalankan
+### 3. Inference Engine
 
-```bash
-./flappybird.exe
-```
+The inference engine multiplies the user's confidence value by the expert CF value.
 
-> ⚠️ Pastikan file `musik.wav` dan `sound.wav` berada satu folder dengan file `.exe`, atau sesuaikan path pada `main.cpp` (`playBackgroundMusic()` dan `PlaySound()`).
+When multiple symptoms support the same diagnosis, the resulting CF values are combined using the standard Certainty Factor combination formula.
 
-### Build via VS Code
+### 4. Diagnosis Result
 
-1. Buka folder project di VS Code
-2. Pastikan ekstensi **C/C++** dari Microsoft terpasang
-3. Tekan `Ctrl+Shift+B` untuk menjalankan build task dari `.vscode/tasks.json`
-4. Jalankan file `.exe` yang dihasilkan
+The system calculates the confidence level for every possible hardware failure.
+
+Results are:
+
+- Ranked from highest to lowest confidence
+- Displayed as Top 3 predictions
+- Visualized with a chart
+- Categorized into confidence levels
 
 ---
 
-## 🎓 Tentang Project
+# Technology Stack
 
-Project ini dibuat untuk memenuhi tugas mata kuliah **Komputer Grafik**, dengan fokus pada penerapan konsep:
-
-- Transformasi 2D (translasi & rotasi objek menggunakan `glTranslatef`, `glRotatef`)
-- Primitif grafik (`GL_TRIANGLE_FAN`, `GL_POLYGON`, `GL_TRIANGLES`)
-- Animasi berbasis waktu (`glutTimerFunc`) dan double buffering
-- Deteksi collision sederhana berbasis bounding area
-- Rendering teks pada layar (`glutBitmapCharacter`)
-
----
-
-## 🗺️ Roadmap / Pengembangan Selanjutnya
-
-- [ ] Mengaktifkan kembali sistem collision detection
-- [ ] Menambahkan efek particle saat game over
-- [ ] Leaderboard/high score tersimpan (file-based)
-- [ ] Cross-platform build (Linux/macOS) dengan library audio alternatif
+| Component | Technology |
+|-----------|------------|
+| Frontend | HTML, CSS, JavaScript |
+| Inference Engine | Python |
+| Reasoning Method | Certainty Factor |
+| Knowledge Representation | Rule-Based Expert System |
 
 ---
 
-## 🖼️ Menambahkan Screenshot & GIF
+# Symptom Categories
 
-1. Buat folder `assets/screenshots/` di root repo
-2. Rekam gameplay (misalnya dengan **ScreenToGif**, **OBS Studio**, atau **ShareX**)
-3. Simpan sebagai `demo.gif`, `gameplay.png`, `start.png`, `gameover.png`
-4. Commit & push — README di atas akan otomatis menampilkannya di GitHub
+| Category | Example Symptoms |
+|-----------|------------------|
+| Power | Device does not respond to the power button, sudden shutdown, repeated restarts |
+| Screen | Blank screen, display lines, cracked appearance, ghost touch |
+| Charging | Device will not charge, USB not detected |
+| Audio | No sound output, low speaker volume |
+| Camera | Blurry photos, camera fails to open |
+| Connectivity | No cellular signal, Wi-Fi cannot be enabled |
+| Overheating | Device overheats, abnormal IC behavior |
+| Battery | Swollen battery |
 
 ---
 
-## 📄 Lisensi
+# Limitations
 
-Project ini dilisensikan di bawah [MIT License](LICENSE) — bebas digunakan, dimodifikasi, dan didistribusikan dengan mencantumkan atribusi.
+- The knowledge base is based on the experience of a single smartphone repair technician.
+- Confidence values are expert estimates rather than statistically validated probabilities.
+- Only predefined symptoms can be diagnosed.
+- The system depends on accurate symptom input from users.
+- The knowledge base does not update automatically.
+- The web interface and Python inference engine are maintained separately.
 
 ---
 
-<div align="center">
+# Future Development
 
-Dibuat dengan ❤️ oleh **[Hilmy Dzakwan](https://github.com/hilmydzakwan)**
+Possible improvements include:
 
-</div>
+- Expand the knowledge base with additional symptoms and hardware failures.
+- Validate Certainty Factor values using multiple experts.
+- Integrate the Python inference engine into a unified backend.
+- Add image-based diagnosis support.
+- Compare Certainty Factor with alternative reasoning methods such as Fuzzy Logic or Bayesian approaches.
+- Develop a mobile version of the application.
+
+---
+
+# What I Learned
+
+This project helped me gain practical experience in:
+
+- Designing rule-based expert systems
+- Applying the Certainty Factor method
+- Building an inference engine
+- Representing expert knowledge programmatically
+- Developing interactive web applications
+- Writing technical documentation
+- Translating real-world expertise into software logic
+
+---
+
+# References
+
+- Nugrahani, K. N. (2024). *Sistem Pakar Diagnosa Kerusakan Smartphone Android Dengan Metode Certainty Factor Berbasis Web*. Universitas Duta Bangsa Surakarta.
+
+- Nengsih, Y. G. (2020). *Sistem Pakar Menggunakan Forward Chaining dan Certainty Factor untuk Diagnosa Kerusakan Smartphone*. JURSIMA, 8(2), 21–30.
+
+---
+
+# License
+
+This project is licensed under the MIT License.
+
+See the [LICENSE](LICENSE) file for details.
+
+---
+
+# Acknowledgment
+
+Special thanks to the professional smartphone repair technician who generously shared the domain knowledge used to build the knowledge base and Certainty Factor rules implemented in this project.
