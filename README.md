@@ -17,6 +17,8 @@ A web-based expert system that performs an initial diagnosis of Android hardware
 
 This project was developed as the final project for the **Expert System** course, Informatics Engineering, Faculty of Informatics, Bina Insani University (2026).
 
+The project was completed collaboratively by a team of four students, while this repository is maintained by Muhammad Hilmy Al-dzakwan as part of his software development portfolio.
+
 ---
 
 # Table of Contents
@@ -42,6 +44,8 @@ This project was developed as the final project for the **Expert System** course
 Diagnosing smartphone hardware failures often requires technical knowledge and practical experience. This project aims to assist users by providing an initial diagnosis based on the symptoms they observe.
 
 The system applies the **Certainty Factor (CF)** method, a reasoning technique commonly used in expert systems to represent uncertainty. Since one symptom can indicate multiple hardware failures with different confidence levels, the CF method combines expert knowledge with user confidence values to estimate the most probable diagnosis.
+
+<img width="989" height="877" alt="image" src="https://github.com/user-attachments/assets/9155027c-424e-44e4-ac8f-2b1e338ac5ea" />
 
 ---
 
@@ -210,17 +214,10 @@ Special thanks to the professional smartphone repair technician who generously s
 
 ---
 
-## Team
-
-- Muhammad Hilmy Al-dzakwan
-- Andrean Yudi Utomo
-- Hafidz Zaman
-- Adjly Vellian Qianu
-
----
-
 <div align="center">
 
-Made with ❤️ by **[Hilmy Dzakwan](https://github.com/hilmydzakwan)**
+Developed by Muhammad Hilmy Al-dzakwan
+
+GitHub: https://github.com/hilmydzakwan
 
 </div>
