@@ -201,3 +201,12 @@ See the [LICENSE](LICENSE) file for details.
 # Acknowledgment
 
 Special thanks to the professional smartphone repair technician who generously shared the domain knowledge used to build the knowledge base and Certainty Factor rules implemented in this project.
+
+---
+
+## Team
+
+- Muhammad Hilmy Al-dzakwan
+- Andrean Yudi Utomo
+- Hafidz Zaman
+- Adjly Vellian Qianu
